@@ -63,7 +63,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.CR_PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Docker image
         run: docker build . --tag ghcr.io/cpwc/aws-quota-checker:latest
       - name: Push Docker image for branch
