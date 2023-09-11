@@ -8,7 +8,7 @@ import time
 import contextlib
 import typing
 
-from aws_quota.check.quota_check import InstanceQuotaCheck, QuotaCheck
+from aws_quota.check.quota_check import AZQuotaCheck, InstanceQuotaCheck, QuotaCheck
 
 import boto3
 import prometheus_client as prom
@@ -99,6 +99,9 @@ class PrometheusExporter:
                                 checks.append(
                                     chk(self.session, identifier)
                                 )
+                        elif issubclass(chk, AZQuotaCheck):
+                            for az in chk.get_availability_zones(self.session):
+                                checks.append(chk(self.session, az))
                         else:
                             checks.append(chk(self.session))
                     except Exception:

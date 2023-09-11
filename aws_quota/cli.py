@@ -7,8 +7,8 @@ import boto3
 import click
 import tabulate
 
-from aws_quota.check.quota_check import InstanceQuotaCheck, QuotaCheck, QuotaScope
-from aws_quota.check import ALL_CHECKS, ALL_INSTANCE_SCOPED_CHECKS
+from aws_quota.check.quota_check import AZQuotaCheck, InstanceQuotaCheck, QuotaCheck, QuotaScope
+from aws_quota.check import ALL_CHECKS, ALL_INSTANCE_SCOPED_CHECKS, ALL_AZ_SCOPED_CHECKS
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +36,14 @@ def check_keys_to_check_classes(check_string: str):
 
     return list(
         filter(lambda c: c.key not in blacklisted_check_keys, selected_checks))
+
+def check_regions(regions: str) -> typing.List[str]:
+    if regions is not None:
+        return regions.split(',')
+    else:
+        client = boto3.client('ec2')
+        regions = [region['RegionName'] for region in client.describe_regions()['Regions']]
+        return regions
 
 
 class Runner:
@@ -111,6 +119,8 @@ class Runner:
                 scope = get_account_id(self.session)
             elif chk.scope == QuotaScope.REGION:
                 scope = f'{get_account_id(self.session)}/{self.session.region_name}'
+            elif chk.scope == QuotaScope.AZ:
+                scope = f'{get_account_id(self.session)}/{chk.boto_session.region_name}/{chk.az}'
             elif chk.scope == QuotaScope.INSTANCE:
                 scope = f'{get_account_id(self.session)}/{self.session.region_name}/{chk.instance_id}'
 
@@ -192,6 +202,9 @@ def check(check_keys, region, profile, warning_threshold, error_threshold, fail_
                     checks.append(
                         chk(session, identifier)
                     )
+            elif issubclass(chk, AZQuotaCheck):
+                for az in chk.get_availability_zones(session):
+                    checks.append(chk(session, az))
             else:
                 checks.append(chk(session))
 
