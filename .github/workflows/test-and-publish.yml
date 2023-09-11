@@ -20,12 +20,6 @@ jobs:
           python-version: "3.8"
       - name: install
         run: pip install .
-      - name: run all checks
-        run: aws-quota-checker check all
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: eu-central-1
 
   publish:
     runs-on: ubuntu-latest
@@ -71,15 +65,15 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.CR_PAT }}
       - name: Build Docker image
-        run: docker build . --tag ghcr.io/brennerm/aws-quota-checker:latest
+        run: docker build . --tag ghcr.io/cpwc/aws-quota-checker:latest
       - name: Push Docker image for branch
         if: ${{ github.ref == 'refs/heads/master' && github.event_name == 'push' }}
         run: |
-          docker tag ghcr.io/brennerm/aws-quota-checker:latest ghcr.io/brennerm/aws-quota-checker:master
-          docker push ghcr.io/brennerm/aws-quota-checker:master
+          docker tag ghcr.io/cpwc/aws-quota-checker:latest ghcr.io/cpwc/aws-quota-checker:master
+          docker push ghcr.io/cpwc/aws-quota-checker:master
       - name: Push Docker image for tag
         if: ${{ startsWith(github.ref, 'refs/tags') && github.event_name == 'push' }}
         run: |
-          docker tag ghcr.io/brennerm/aws-quota-checker:latest ghcr.io/brennerm/aws-quota-checker:${GITHUB_REF##*/}
-          docker push ghcr.io/brennerm/aws-quota-checker:latest
-          docker push ghcr.io/brennerm/aws-quota-checker:${GITHUB_REF##*/}
+          docker tag ghcr.io/cpwc/aws-quota-checker:latest ghcr.io/cpwc/aws-quota-checker:${GITHUB_REF##*/}
+          docker push ghcr.io/cpwc/aws-quota-checker:latest
+          docker push ghcr.io/cpwc/aws-quota-checker:${GITHUB_REF##*/}
