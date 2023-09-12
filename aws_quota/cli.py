@@ -188,7 +188,7 @@ def check(check_keys, region, profile, warning_threshold, error_threshold, fail_
 
     selected_checks = check_keys_to_check_classes(check_keys)
 
-    session = boto3.Session(region_name=region)
+    session = boto3.Session()
 
     click.echo(
         f'AWS profile: {session.profile_name} | AWS region: {session.region_name} | Active checks: {",".join([check.key for check in selected_checks])}')
@@ -224,7 +224,7 @@ def check_instance(check_key, instance_id, region, profile, warning_threshold, e
 
     Execute list-checks command to get available instance checks"""
 
-    session = boto3.Session(region_name=region)
+    session = boto3.Session()
 
     selected_check = next(
         filter(lambda mon: mon.key == check_key, ALL_INSTANCE_SCOPED_CHECKS), None)
@@ -266,7 +266,7 @@ def prometheus_exporter(check_keys, region, profile, port, namespace, limits_che
 
     selected_checks = check_keys_to_check_classes(check_keys)
 
-    session = boto3.Session(region_name=region)
+    session = boto3.Session()
 
     click.echo(
         f'AWS profile: {session.profile_name} | AWS region: {session.region_name} | Active checks: {",".join([check.key for check in selected_checks])}')

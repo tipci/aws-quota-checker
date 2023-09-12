@@ -1,0 +1,17 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/cpwc/aws-quota-checker
+  tag: "master"
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 8080
+
+resources: {}
+
+serviceAccount:
+  create: true
+  annotations: {}
+  automountServiceAccountToken: true
