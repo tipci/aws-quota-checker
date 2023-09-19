@@ -1,0 +1,24 @@
+{{- if.Values.podMonitor.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "aws-quota-checker.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+  {{- with .Values.podMonitor.additionalLabels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  selector:
+    matchLabels:
+      {{- include "aws-quota-checker.selectorLabels" . | nindent 6 }}
+  podMetricsEndpoints:
+    - port: http
+      path: /metrics
+      {{- with .Values.podMonitor.interval }}
+      interval: {{ . | quote }}
+      {{- end }}
+{{- end }}
