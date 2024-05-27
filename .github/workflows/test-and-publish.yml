@@ -77,7 +77,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: master
+          tags: ghcr.io/cpwc/aws-quota-checker:master
           platforms: linux/amd64,linux/arm64
 
       - name: Push Docker image for branch
@@ -85,5 +85,5 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: latest,${GITHUB_REF##*/}
+          tags: ghcr.io/cpwc/aws-quota-checker:latest,ghcr.io/cpwc/aws-quota-checker:${GITHUB_REF##*/}
           platforms: linux/amd64,linux/arm64
