@@ -18,8 +18,9 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           args:
-            - prometheus-exporter
-            - vpc_count,ec2_eip_count,vpc_nat_gateways_per_availability_zone
+            {{- range .Values.args }}
+            - {{ . }}
+            {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
