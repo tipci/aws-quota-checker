@@ -34,3 +34,4 @@ podMonitor:
 # This gets passed to the container as arguments, add the metrics you want to collect.
 extraArgs:
   - vpc_count,ec2_eip_count,vpc_nat_gateways_per_availability_zone
+  
